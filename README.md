@@ -1,11 +1,10 @@
-# Nom de votre projet
+# Projet Todo List
 
 ## Description
 
-Une brève description de ce que fait votre projet.
+Ce projet est une application Todo List simple écrite en Python avec Flask. Il utilise MongoDB comme base de données et fournit une API REST pour créer, lire, mettre à jour et supprimer des tâches.
 
 ## Installation
-
 Expliquez comment installer votre projet. Par exemple :
 
 1. Clonez le dépôt :
