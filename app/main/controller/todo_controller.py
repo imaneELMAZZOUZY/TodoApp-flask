@@ -22,7 +22,9 @@ class TodoList(Resource):
         """List all registered todos"""
         todos = get_all_todos()
         return [todo.to_dict() for todo in todos]
+    
 
+    
 
     @api.response(201, 'Todo successfully created.')
     @api.doc('create a new todo')
@@ -30,10 +32,13 @@ class TodoList(Resource):
     def post(self):
         """Creates a new Todo """
         data = request.json        
-        inserted_id= save_new_todo(data=data)
-        return {   
-            "id": str(inserted_id)
-        }, 201
+        todo= save_new_todo(data=data)
+        if not todo:
+            return {
+                'message': 'Error, try again'
+            }, 400
+        else:
+            return todo.to_dict(), 201
     
 
 @api.route('/<id>')
@@ -101,6 +106,18 @@ class CompletedTodoList(Resource):
         todos = get_all_completed_todos()
         return [todo.to_dict() for todo in todos]
     
+    def delete(self):
+        """Delete all completed todos"""
+        deleted = delete_all_completed_todos()
+        if deleted:
+            return {
+                'message': 'Deleted successfully'
+            }, 200  
+        else:
+            return {
+                'message': 'Error, try again'
+            }, 400
+    
 
 @api.route('/uncompleted')
 class UncompletedTodoList(Resource):
@@ -118,17 +135,17 @@ class UncompletedTodoList(Resource):
 @api.route('/completed/<id>')
 @api.param('id', 'The Todo identifier')
 @api.response(404, 'Todo not found.')
-class MarkAsCompleted(Resource):
-    @api.response(201, 'Todo successfully marked as completed.')
-    @api.doc('mark a todo as completed')
+class ChangeCompletedStatus(Resource):
+    @api.response(201, 'Completed status changed successfully .')
+    @api.doc('change completed todo status')
     @api.marshal_with(_todo)
     def put(self,id):
-        """Mark a todo as completed"""
-        completed= mark_as_completed(id)
-        if  not completed:
+        """Change completed todo status"""
+        todo= change_completed_status(id)
+        if  not todo:
             api.abort(404)
         else :
-            return completed.to_dict()
+            return todo.to_dict()
 
 
     

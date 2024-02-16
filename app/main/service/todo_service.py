@@ -19,9 +19,13 @@ def save_new_todo(data):
     )
 
     inserted_todo = todos.insert_one(new_todo.to_dict())
-    new_todo.id = inserted_todo.inserted_id
 
-    return new_todo.id
+    if inserted_todo:
+        new_todo.id = inserted_todo.inserted_id
+        return new_todo
+    else:
+        return None
+
 
 def get_all_todos():
     todos = mongo.db.todos
@@ -155,12 +159,12 @@ def update_a_todo(id, data):
     else:
         return None
 
-def mark_as_completed(id):
+def change_completed_status(id):
     todos = mongo.db.todos
     todo = todos.find_one({"_id": ObjectId(id)})
     if not todo:
         return None
-    todo['completed'] = True
+    todo['completed'] = not todo['completed']
     updated_doc = todos.find_one_and_update(
         {"_id": ObjectId(id)},
         {"$set": todo},
